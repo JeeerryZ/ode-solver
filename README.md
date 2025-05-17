@@ -36,11 +36,11 @@ cmake --build build --config Release
 
 ### Step 1: Implement Your ODE System
 Edit the `ode` function in `main.cpp`:
-auto ode(double t, const std::vector<double>& y, const Params& p) -> std::vector<double> {
-// Where vector y is where you enter your initial conditions (position, velocity, acceleration) and Params p is where you enter your constants (mass, gravity, length, etc) \n
-// Example: {x,x''} (2 deegres of freedom) \n
-// Add the O.D.E. logic inside the function body \n
-// Example: x'' + m/L * x = 0 --> x'' = -m/L  * x \n
+auto ode(double t, const std::vector<double>& y, const Params& p) -> std::vector<double> {  
+// Where vector y is where you enter your initial conditions (position, velocity, acceleration) and Params p is where you enter your constants (mass, gravity, length, etc)  
+// Example: {x,x''} (2 deegres of freedom)  
+// Add the O.D.E. logic inside the function body  
+// Example: x'' + m/L * x = 0 --> x'' = -m/L  * x  
 return { std::vector<double> }; // Return a vector with the logic applied.
 // Example {x (non modified, will be used for next iteration), x'' (modified by the logic of the function)}
 // Also you gotta modify the RK4 method if you want to add or remove one or more variables (will implement a easier way i promise)
