@@ -37,21 +37,57 @@ Easily implement new physical or mathematical systems.
 
 ## Adapting to Other Systems
 
-### Step 1: Implement Your ODE System
-Edit the `ode` function in `main.cpp`:  
-`auto ode(double t, const std::vector<double>& y, const Params& p) -> std::vector<double>`
-//Where vector y is where you enter your initial conditions (position, velocity, acceleration) and Params p is where you enter your constants (mass, gravity, length, etc)  
-Example: `y0 = {x,x_p}` (2 degrees of freedom, position and velocity)   
-//Add the O.D.E. logic inside the function body  
- Example: $\ddot{x} + \frac{m}{L} x = 0$  
-`return { std::vector<double> };` -> Returns a vector with the logic applied.   
-// The returned vector must be the same size and in the same order as the initial state vector    
+## Step 1: Implement Your ODE System
+
+Edit the `ode` function in `main.cpp` following this template:
+```cpp
+auto ode(double t, const std::vector<double>& y, const Params& p) -> std::vector<double> {  
+    // Your ODE logic here  
+}
+```
+
+Parameter Structure
+
+| Parameter | Description                              | Example Usage      |
+|-----------|------------------------------------------|--------------------|
+| y         | State vector (current values)            | y = position, y = velocity |
+| p         | System constants (Params struct)         | p.m1, p.L, etc.    |
+
+Example: Simple Harmonic Oscillator
+
+Equation:
+$$
+\ddot{x} + \frac{m}{L} x = 0
+$$
+
+Implementation:
+```cpp
+auto ode(double t, const std::vector<double>& y, const Params& p) -> std::vector<double> {
+    double x = y;      // Position
+    double x_p = y[1];    // Velocity
+
+    double x_pp = -p.m / p.L * x;  // Acceleration
+
+    return {x_p, x_pp};  // Returns [dx/dt, d²x/dt²]
+}
+```
+Essential Rules
+
+1. Dimensional consistency:
+   The returned vector must have the same size and order as the input state vector.  
+
+   Example:  
+   // Input state: [θ, θ']  
+   // Correct return: [θ', θ'']  
+   return {theta_p, theta_pp};
 
 ### Step 2: Adjust Parameters  
-`Params p = {/* new parameters /};`  
-`std::vector<double> y0 = {/ new initial conditions */};`  
-`double h = 0.1;` // New time step in seconds  
-`double tf = 5.0;` // New final time in seconds  
+```cpp
+Params p{} //Add your constants
+std::vector<double> y0{} // Set your initial conditions
+double h = 0.1; // Set your time step
+double tf = 5.0; // Set the total time of the simulation
+```
 
 
 ## Example: Mass-Pendulum System
@@ -61,8 +97,9 @@ $\ddot{x}_2 = \frac{m_1 L \dot{\theta}^2 \sin\theta - m_1 g \sin\theta \cos\thet
 
 
 ### Default Parameters
-`Params p = {1.0, 2.0, 1.0, 9.81};` // $m₁, m₂, L, g$  
-`std::vector<double> y0 = {M_PI/6, 0.0, 0.0, 0.0};` // $\theta, \dot\{\theta}, x_2, \dot\{x_2}$  
-
+```cpp
+Params p = {1.0, 2.0, 1.0, 9.81}; // $m₁, m₂, L, g$  
+std::vector<double> y0 = {M_PI/6, 0.0, 0.0, 0.0}; // $\theta, \dot\{\theta}, x_2, \dot\{x_2}$  
+```
 
 
