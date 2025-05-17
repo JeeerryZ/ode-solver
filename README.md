@@ -21,7 +21,7 @@ Easily implement new physical or mathematical systems.
 
 ### 1. Building
 `git clone https://github.com/JeeerryZ/ode-solver.git`  
-`cd ode-solver`
+`cd ode-solver`  
 `cmake -B build -S .`  
 `cmake --build build --config Release`
 
