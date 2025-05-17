@@ -56,9 +56,8 @@ Parameter Structure
 Example: Simple Harmonic Oscillator
 
 Equation:
-$$
-\ddot{x} + \frac{m}{L} x = 0
-$$
+$\ddot{x} + \frac{m}{L} x = 0$
+
 
 Implementation:
 ```cpp
