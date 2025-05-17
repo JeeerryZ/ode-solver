@@ -41,25 +41,25 @@ auto ode(double t, const std::vector<double>& y, const Params& p) -> std::vector
 // Example: {x,x''} (2 deegres of freedom)  
 // Add the O.D.E. logic inside the function body  
 // Example: x'' + m/L * x = 0 --> x'' = -m/L  * x  
-return { std::vector<double> }; // Return a vector with the logic applied.
-// Example {x (non modified, will be used for next iteration), x'' (modified by the logic of the function)}
-// Also you gotta modify the RK4 method if you want to add or remove one or more variables (will implement a easier way i promise)
+return { std::vector<double> }; // Return a vector with the logic applied.  
+// Example {x (non modified, will be used for next iteration), x'' (modified by the logic of the function)}  
+// Also you gotta modify the RK4 method if you want to add or remove one or more variables (will implement a easier way i promise)  
 
-### Step 2: Adjust Parameters
-Params p = {/* new parameters /};
-std::vector<double> y0 = {/ new initial conditions */};
-double h = 0.1; // New time step in seconds
-double tf = 5.0; // New final time in seconds
+### Step 2: Adjust Parameters  
+Params p = {/* new parameters /};  
+std::vector<double> y0 = {/ new initial conditions */};  
+double h = 0.1; // New time step in seconds  
+double tf = 5.0; // New final time in seconds  
 
 
 ## Example: Mass-Pendulum System
-The code includes an example implementation for the pendulum attached to a moving body:
-θ'' = [(m₁+m₂)g sinθ - m₁Lθ'² sinθ cosθ] / [(m₁+m₂)L - m₁L cos²θ]
-x₂'' = [m₁Lθ'² sinθ - m₁g sinθ cosθ] / [(m₁+m₂)L - m₁L cos²θ]
+The code includes an example implementation for the pendulum attached to a moving body:  
+θ'' = [(m₁+m₂)g sinθ - m₁Lθ'² sinθ cosθ] / [(m₁+m₂)L - m₁L cos²θ]  
+x₂'' = [m₁Lθ'² sinθ - m₁g sinθ cosθ] / [(m₁+m₂)L - m₁L cos²θ]  
 
 ### Default Parameters
-Params p = {1.0, 2.0, 1.0, 9.81}; // m₁, m₂, L, g
-std::vector<double> y0 = {M_PI/6, 0.0, 0.0, 0.0}; // θ, θ', x₂, x₂'
+Params p = {1.0, 2.0, 1.0, 9.81}; // m₁, m₂, L, g  
+std::vector<double> y0 = {M_PI/6, 0.0, 0.0, 0.0}; // θ, θ', x₂, x₂'  
 
 
 
