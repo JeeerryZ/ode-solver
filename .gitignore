@@ -1,0 +1,16 @@
+/build/
+Makefile
+
+.vscode/
+
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.log
+
