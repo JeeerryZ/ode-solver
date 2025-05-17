@@ -76,31 +76,64 @@ auto rk4_solve(
     const double &h,
     const Params &p)
 {
+
+    if (y0.empty())
+    {
+        throw std::invalid_argument("Initial state vector y0 is empty.");
+    }
+
     using solution_t = std::vector<std::vector<double>>;
     solution_t solution = {};
+
+    const size_t state_size = y0.size();
+    const int n_steps = static_cast<int>((tf - t0) / h);
+
     std::vector<double> y = y0;
-    double t = t0;
-    int n_steps = static_cast<int>((tf - t0) / h);
+    std::vector<double> k1(state_size);
+    std::vector<double> k2(state_size);
+    std::vector<double> k3(state_size);
+    std::vector<double> k4(state_size);
+    std::vector<double> cache(state_size);
 
     solution.reserve(n_steps + 1);
-    solution.push_back({t0, y[0], y[1], y[2], y[3]});
+    solution.push_back({t0});
+    solution.back().insert(solution.back().end(), y.begin(), y.end());
 
-    for (size_t i = 0; i < n_steps; i++)
+    double t = t0;
+
+    for (int i = 0; i < n_steps; ++i)
     {
-        // Setting up the RK4 method
-        std::vector<double> k1 = ode_system(t, y, p);
-        std::vector<double> k2 = ode_system(t + h / 2, {y[0] + h / 2 * k1[0], y[1] + h / 2 * k1[1], y[2] + h / 2 * k1[2], y[3] + h / 2 * k1[3]}, p);
-        std::vector<double> k3 = ode_system(t + h / 2, {y[0] + h / 2 * k2[0], y[1] + h / 2 * k2[1], y[2] + h / 2 * k2[2], y[3] + h / 2 * k2[3]}, p);
-        std::vector<double> k4 = ode_system(t + h, {y[0] + h * k3[0], y[1] + h * k3[1], y[2] + h * k3[2], y[3] + h * k3[3]}, p);
+        k1 = ode_system(t, y, p);
 
-        for (size_t j = 0; j < y.size(); j++)
+        for (size_t j = 0; j < state_size; ++j)
         {
-            y[j] += h / 6 * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]);
+            cache[j] = y[j] + h * k1[j] / 2;
+        }
+        k2 = ode_system(t + h / 2, cache, p);
+        for (size_t j = 0; j < state_size; ++j)
+        {
+            cache[j] = y[j] + h * k2[j] / 2;
+        }
+        k3 = ode_system(t + h / 2, cache, p);
+        for (size_t j = 0; j < state_size; ++j)
+        {
+            cache[j] = y[j] + h * k3[j];
+        }
+        k4 = ode_system(t + h, cache, p);
+
+        for (size_t j = 0; j < state_size; ++j)
+        {
+            y[j] += h * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]) / 6;
         }
 
         t += h;
-        solution.push_back({t, y[0], y[1], y[2], y[3]});
+
+        solution.emplace_back();
+        solution.back().reserve(state_size + 1);
+        solution.back().push_back(t);
+        solution.back().insert(solution.back().end(), y.begin(), y.end());
     }
+
     return solution;
 }
 // Very simple argument parser, i was going to use some std::arrays and some iterators to make it more elegant but i dont think it will matter for only 2 arguments lol
