@@ -20,10 +20,10 @@ Easily implement new physical or mathematical systems.
 ## Usage
 
 ### 1. Building
-``git clone https://github.com/JeeerryZ/ode-solver.git  
-cd ode-solver  
-cmake -B build -S .  
-cmake --build build --config Release``
+`git clone https://github.com/JeeerryZ/ode-solver.git`  
+`cd ode-solver`
+`cmake -B build -S .`  
+`cmake --build build --config Release`
 
 ### 2. Basic Execution
 `./ode-solver` # Generates results.csv with simulation data.
