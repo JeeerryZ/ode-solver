@@ -38,7 +38,7 @@ using ode_system = std::function<std::vector<double>(double, const std::vector<d
  * @param p Params struct
  * @return std::vector<double> with the results states of the system
  */
-auto ode(double t, const std::vector<double> &y, const Params &p) -> std::vector<double>
+auto pendulum_cart_system(double t, const std::vector<double> &y, const Params &p) -> std::vector<double>
 {
     double theta = y[0];
     double theta_p = y[1];
@@ -54,6 +54,20 @@ auto ode(double t, const std::vector<double> &y, const Params &p) -> std::vector
     double x2_pp = over_x2 / under;
 
     return {theta_p, theta_pp, x2_p, x2_pp};
+}
+
+auto pendulum_spring_system(double t, const std::vector<double> &y, const Params &p) -> std::vector<double>
+{
+    double r = y[0];
+    double r_p = y[1];
+    double theta = y[2];
+    double theta_p = y[3];
+
+    double r_pp = (p.m1 * r * theta_p * theta_p + p.m1 * p.g * cos(theta) - p.m2 * (r - p.L)) / p.m1;
+
+    double theta_pp = (-2 * r_p * theta_p - p.g * sin(theta)) / r;
+
+    return {r_p, r_pp, theta_p, theta_pp};
 }
 
 /**
@@ -185,16 +199,16 @@ auto main(int argc, char **argv) -> int
         return 1;
     }
 
-    Params p = {1.0, 2.0, 1.0, 9.81}; // m1, m2, L, g
+    Params p = {1.0, 50.0, 0.5, 9.81}; // m1, m2, L, g
 
-    std::vector<double> y0 = {M_PI / 6, 0.0, 0.0, 0.0}; // Initial conditions: theta, theta', x2, x2'
+    std::vector<double> y0 = {0.5, 0.0, M_PI / 2, 0.0}; // Initial conditions: theta, theta', x2, x2'
     double t0 = 0.0;                                    // Initial time
     double tf = 10.0;                                   // Final time
     double h = 0.01;                                    // Step size
 
     // We measure anyways bc the time needed to do it is negligible, but we only print if args were passed kek
     auto start_time = std::chrono::high_resolution_clock::now();
-    auto results = rk4_solve(ode, y0, t0, tf, h, p);
+    auto results = rk4_solve(pendulum_spring_system, y0, t0, tf, h, p);
     auto end_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_time = (end_time - start_time) * 1000;
 
@@ -202,16 +216,26 @@ auto main(int argc, char **argv) -> int
 
     if (file.is_open())
     {
-        file << "t,theta,theta_p',x2,x2_p'\n";
+        file << "t,x,y\n";
         for (const auto &result : results)
         {
-            file << result[0] << "," << result[1] << "," << result[2] << "," << result[3] << "," << result[4] << "\n";
+            const double &t = result[0];
+            const double &r = result[1];
+            const double &r_p = result[2];
+            const double &theta = result[3];
+            const double &theta_p = result[4];
+            const double &x = r * sin(theta);
+            const double &y = -r * cos(theta);
+            file << t << "," << x << "," << y << "," << r << "," << r_p << "," << theta << "," << theta_p << "," << "\n";
+
+            // file << result[0] << "," << result[1] << "," << result[2] << "," << result[3] << "," << result[4] << "\n";
         }
         file.close();
     }
     else
     {
         std::cerr << "Unable to open file";
+        return 1;
     }
 
     if (benchmark_mode)
