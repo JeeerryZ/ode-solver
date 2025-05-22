@@ -216,7 +216,7 @@ auto main(int argc, char **argv) -> int
 
     if (file.is_open())
     {
-        file << "t,x,y\n";
+        file << "t,x,y,r,r_p,theta,theta_p\n";
         for (const auto &result : results)
         {
             const double &t = result[0];
@@ -226,7 +226,7 @@ auto main(int argc, char **argv) -> int
             const double &theta_p = result[4];
             const double &x = r * sin(theta);
             const double &y = -r * cos(theta);
-            file << t << "," << x << "," << y << "," << r << "," << r_p << "," << theta << "," << theta_p << "," << "\n";
+            file << t << "," << x << "," << y << "," << r << "," << r_p << "," << theta << "," << theta_p << "\n";
 
             // file << result[0] << "," << result[1] << "," << result[2] << "," << result[3] << "," << result[4] << "\n";
         }
